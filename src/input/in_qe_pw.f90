@@ -352,7 +352,9 @@ DO
       READ(30,*,END=800,ERR=800) H(2,1), H(2,2), H(2,3)
       READ(30,*,END=800,ERR=800) H(3,1), H(3,2), H(3,3)
       msg = ADJUSTL(temp(16:))
-      IF( LEN_TRIM(msg)<=0 .OR. INDEX(msg,'alat')>0 .OR. INDEX(msg,'ALAT')>0 ) THEN     
+      IF( LEN_TRIM(msg)<=0 .OR. INDEX(msg,'alat')>0 .OR. INDEX(msg,'ALAT')>0 .OR. &
+          LEN_TRIM(msg)<=0 .OR. INDEX(msg,'{alat}')>0 .OR. INDEX(msg,'{ALAT}')>0 .OR. &
+          LEN_TRIM(msg)<=0 .OR. INDEX(msg,'(alat}')>0 .OR. INDEX(msg,'(ALAT)')>0 ) THEN     
         !Cell dimensions are in alat units (this is the default if nothing is specified)
         !If celldm(1) was not specified, the H(:,:) are in Bohrs
         !Otherwise the H(:,:) must be normalized to alat=celldm(1)
@@ -360,10 +362,14 @@ DO
           H(:,:) = celldm(1)*H(:,:)
         ENDIF
         cell_units='B' 
-      ELSEIF( msg(1:4)=="bohr" .OR. msg(1:4)=="Bohr" ) THEN
+      ELSEIF( msg(1:4)=="bohr" .OR. msg(1:4)=="BOHR" .OR. msg(1:4)=="Bohr" .OR. &
+              msg(1:4)=="{boh" .OR. msg(1:4)=="{BOH" .OR. msg(1:4)=="{Boh" .OR. &
+              msg(1:4)=="(boh" .OR. msg(1:4)=="(BOH" .OR. msg(1:4)=="(Boh" ) THEN
         !Cell dimensions are already in Bohrs
         cell_units='B'
-      ELSEIF( msg(1:3)=='ang' ) THEN
+      ELSEIF( msg(1:4)=='angs' .OR. msg(1:4)=='ANGS' .OR. msg(1:4)=='Angs' .OR. &
+              msg(1:4)=='{ang' .OR. msg(1:4)=='{ANG' .OR. msg(1:4)=='{Ang' .OR. &
+              msg(1:4)=='(ang' .OR. msg(1:4)=='(ANG' .OR. msg(1:4)=='(Ang' ) THEN
         !Cell dimensions are in Angströms
         cell_units='A'
       ENDIF
@@ -380,16 +386,24 @@ DO
       CALL ATOMNUMBER(species,P(i,4))
     ENDDO
     !If coordinates were reduced or in lattice coordinates, convert them
-    IF( LEN_TRIM(msg)<=0 .OR. INDEX(msg,'alat')>0 .OR. INDEX(msg,'ALAT')>0 ) THEN
+    IF( LEN_TRIM(msg)<=0 .OR. INDEX(msg,'alat')>0 .OR. INDEX(msg,'ALAT')>0 .OR. &
+        LEN_TRIM(msg)<=0 .OR. INDEX(msg,'{alat}')>0 .OR. INDEX(msg,'{ALAT}')>0 .OR. &
+        LEN_TRIM(msg)<=0 .OR. INDEX(msg,'(alat)')>0 .OR. INDEX(msg,'(ALAT)')>0 ) THEN
       !Atom coordinates are in alat units (this is the default if nothing is specified)
       P(:,1:3) = celldm(1)*P(:,1:3)
       atpos_units=cell_units
-    ELSEIF( msg(1:4)=="bohr" .OR. msg(1:4)=="Bohr" ) THEN
+    ELSEIF( msg(1:4)=="bohr" .OR. msg(1:4)=="Bohr" .OR. &
+            msg(1:4)=="{boh" .OR. msg(1:4)=="{Boh" .OR. &
+            msg(1:4)=="(boh" .OR. msg(1:4)=="(Boh" ) THEN
       !Atom positions are in Bohrs
       atpos_units='B'
-    ELSEIF( msg(1:7)=='crystal' .OR. msg(1:7)=='CRYSTAL' ) THEN
+    ELSEIF( msg(1:7)=='crystal' .OR. msg(1:7)=='CRYSTAL' .OR. &
+            msg(1:7)=='{crysta' .OR. msg(1:7)=='{CRYSTA' .OR. &
+            msg(1:7)=='(crysta' .OR. msg(1:7)=='(CRYSTA' ) THEN
       CALL FRAC2CART(P,H)
-    ELSEIF( msg(1:3)=='ang' ) THEN
+    ELSEIF( msg(1:4)=='angs' .OR. msg(1:4)=='ANGS' .OR. msg(1:4)=='Angs' .OR. &
+            msg(1:4)=='{ang' .OR. msg(1:4)=='{ANG' .OR. msg(1:4)=='{Ang' .OR. &
+            msg(1:4)=='(ang' .OR. msg(1:4)=='(ANG' .OR. msg(1:4)=='(Ang' ) THEN
       !Atom positions are in Angströms
       atpos_units='A'
     ENDIF
