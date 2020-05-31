@@ -6,7 +6,9 @@
 # USAGE:
 #    make -f Makefile.local
 
-export
+export 
+
+# LAPACK="$(HOME)/local/lib/liblapack.a $(HOME)/local/lib/librefblas.a"
 
 # Here we define the user's home directory as installation path.
 # This way, the program atomsk will be installed in ~/bin/

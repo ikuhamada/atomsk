@@ -1,2 +1,2 @@
 Makefile.local
-*.o
+OBJ/*.o
